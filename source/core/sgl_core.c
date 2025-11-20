@@ -1436,12 +1436,11 @@ static inline void draw_obj_slice(sgl_obj_t *obj, sgl_surf_t *surf, int16_t dirt
 /**
  * @brief calculate dirty area by for each all object that is dirty and visible
  * @param obj it should point to active root object
- * @return true if there is dirty area, otherwise false
+ * @return none
  * @note if there is no dirty area, the dirty area will remain unchanged
  */
-static inline bool sgl_dirty_area_calculate(sgl_obj_t *obj)
+static inline void sgl_dirty_area_calculate(sgl_obj_t *obj)
 {
-    bool need_draw = false;
 	sgl_obj_t *stack[SGL_OBJ_DEPTH_MAX];
     int top = 0;
     stack[top++] = obj;
@@ -1470,7 +1469,7 @@ static inline bool sgl_dirty_area_calculate(sgl_obj_t *obj)
             if (unlikely(obj == sgl_screen_act())) {
                 obj->destroyed = 0;
                 sgl_obj_node_init(obj);
-                return false;
+                return;
             }
 
             /* update parent layout */
@@ -1482,7 +1481,6 @@ static inline bool sgl_dirty_area_calculate(sgl_obj_t *obj)
             /* free obj resource */
             sgl_obj_free(obj);
 
-            need_draw = true;
             /* object is destroyed, skip */
             continue;
         }
@@ -1504,17 +1502,12 @@ static inline bool sgl_dirty_area_calculate(sgl_obj_t *obj)
         if (sgl_obj_is_dirty(obj)) {
             /* update obj area */
             if (unlikely(!sgl_area_clip(&obj->parent->area, &obj->coords, &obj->area))) {
-                sgl_obj_set_invalid(obj);
+                sgl_area_init(&obj->area);
                 continue;
-            }
-            else {
-                sgl_obj_set_valid(obj);
             }
 
             /* merge dirty area */
             sgl_obj_dirty_merge(obj);
-
-            need_draw = true;
 
             /* clear dirty flag */
             sgl_obj_clear_dirty(obj);
@@ -1524,8 +1517,6 @@ static inline bool sgl_dirty_area_calculate(sgl_obj_t *obj)
 			stack[top++] = obj->child;
 		}
     }
-
-    return need_draw;
 }
 
 
@@ -1542,11 +1533,7 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
 
     /* fix dirty area if it is out of screen */
     dirty->x1 = sgl_max(dirty->x1, 0);
-    /**
-     * dirty->x2 should be sgl_panel_resolution_width() - 1, but later surf->w is dirty->x2 - dirty->x1 + 1,
-     * so dirty->x2 can be sgl_panel_resolution_width(), the surf->w can be dirty->x2 - dirty->x1, for dirty->y2 is also.
-    */
-    dirty->x2 = sgl_min(dirty->x2, sgl_panel_resolution_width());
+    dirty->x2 = sgl_min(dirty->x2, sgl_panel_resolution_width() - 1);
     dirty->y1 = sgl_max(dirty->y1, 0);
     dirty->y2 = sgl_min(dirty->y2, sgl_panel_resolution_height());
 
@@ -1554,7 +1541,7 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
     /* to set start x and y position for dirty area */
     surf->y = dirty->y1;
     surf->x = dirty->x1;
-    surf->w = dirty->x2 - dirty->x1;
+    surf->w = dirty->x2 - dirty->x1 + 1;
     surf->h = surf->size / surf->w;
     SGL_LOG_TRACE("sgl_draw_task: dirty area: x: %d, y: %d, w: %d, h: %d", dirty->x1, dirty->y1, surf->w, dirty->y2 - dirty->y1 + 1);
 
@@ -1596,9 +1583,7 @@ void sgl_task_handle(void)
     sgl_tick_reset();
 
     /* calculate dirty area, if no dirty area, return directly */
-    if (! sgl_dirty_area_calculate(&sgl_ctx.page->obj)) {
-        return;
-    }
+    sgl_dirty_area_calculate(&sgl_ctx.page->obj);
 
     /* draw task  */
 #if (CONFIG_SGL_DIRTY_AREA_THRESHOLD)
