@@ -1799,6 +1799,18 @@ static inline sgl_obj_t* sgl_obj_get_child(sgl_obj_t* obj)
 }
 
 
+/**
+ * @brief get sibling of an object
+ * @param obj the object
+ * @return the sibling of the object
+ */
+static inline sgl_obj_t* sgl_obj_get_sibling(sgl_obj_t* obj)
+{
+    SGL_ASSERT(obj != NULL);
+    return obj->sibling;
+}
+
+
 #if (CONFIG_SGL_OBJ_USE_NAME)
 /**
  * @brief set object name
