@@ -300,6 +300,8 @@ void sgl_event_task(void)
             else {
                 obj = event_lost;
                 sgl_get_move_info(&evt);
+                evt.pos.x = sgl_clamp(obj->coords.x1, evt.pos.x, obj->coords.x2);
+                evt.pos.y = sgl_clamp(obj->coords.y1, evt.pos.y, obj->coords.y2);
             }
         }
         else {
