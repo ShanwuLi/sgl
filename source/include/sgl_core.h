@@ -604,6 +604,7 @@ static inline uint8_t sgl_tick_get(void)
  * @param ms milliseconds
  * @return none
  * @note in general, you should call this function in the 1ms tick interrupt handler
+ *       of course, you can use polling function to increase tick milliseconds.
  */
 static inline void sgl_tick_inc(uint8_t ms)
 {
@@ -802,6 +803,14 @@ static inline size_t sgl_obj_get_child_count(sgl_obj_t *obj)
 
 
 /**
+ * @brief merge area with current dirty area
+ * @param merge [in] merge area
+ * @return none
+ */
+void sgl_obj_dirty_merge(sgl_obj_t *obj);
+
+
+/**
  * @brief  Set the object to be destroyed
  * @param  obj: the object to set
  * @retval None
@@ -909,6 +918,7 @@ static inline void sgl_obj_set_hidden(sgl_obj_t *obj)
 {
     SGL_ASSERT(obj != NULL);
     obj->hide = 1;
+    sgl_obj_dirty_merge(obj);
 }
 
 
@@ -921,6 +931,7 @@ static inline void sgl_obj_set_visible(sgl_obj_t *obj)
 {
     SGL_ASSERT(obj != NULL);
     obj->hide = 0;
+    sgl_obj_dirty_merge(obj);
 }
 
 
@@ -1082,14 +1093,6 @@ static inline bool sgl_obj_is_movable(sgl_obj_t *obj)
     SGL_ASSERT(obj != NULL);
     return obj->movable == 1 ? true : false;
 }
-
-
-/**
- * @brief merge area with current dirty area
- * @param merge [in] merge area
- * @return none
- */
-void sgl_obj_dirty_merge(sgl_obj_t *obj);
 
 
 /**
