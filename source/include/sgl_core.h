@@ -324,6 +324,7 @@ typedef struct sgl_font_unicode {
 * @compress: compress flag, 0: no compress, 1: compress
 * @unicode: point to struct sgl_font_unicode struct
 * @unicode_num: number of unicode parts
+* @base_line: base line of font
 */
 typedef struct sgl_font {
     const uint8_t  *bitmap;
@@ -334,6 +335,7 @@ typedef struct sgl_font {
     const uint16_t  compress : 1;     // compress flag
     const sgl_font_unicode_t *unicode;
     const uint32_t  unicode_num;
+    const int32_t   base_line;
 } sgl_font_t;
 
 

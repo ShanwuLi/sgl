@@ -72,7 +72,7 @@ static const uint8_t opa2_table[4]  = {0, 85, 170, 255};
  */
 void sgl_draw_character(sgl_surf_t *surf, sgl_area_t *area, int16_t x, int16_t y, uint32_t ch_index, sgl_color_t color, uint8_t alpha, const sgl_font_t *font)
 {
-    int offset_y2 = font->font_height - font->table[ch_index].ofs_y;
+    int offset_y2 = font->font_height - font->table[ch_index].ofs_y - font->base_line;
     const uint8_t *dot = &font->bitmap[font->table[ch_index].bitmap_index];
     const uint8_t font_w = font->table[ch_index].box_w;
     const uint8_t font_h = font->table[ch_index].box_h;
