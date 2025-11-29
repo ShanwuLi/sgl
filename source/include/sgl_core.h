@@ -249,6 +249,7 @@ typedef struct sgl_surf {
 * @height: pixmap height
 * @format: bitmap format 0: no compression, 1:
 * @read: read pixel map from external storage
+* @data: user private data for @read
 */
 typedef struct sgl_pixmap {
     const uint8_t *bitmap;
@@ -257,7 +258,8 @@ typedef struct sgl_pixmap {
     uint32_t       format : 8;
 
 #if (CONFIG_SGL_EXTERNAL_PIXMAP)
-    void          (*read)(void *buff, uint32_t pos, size_t size);
+    void          (*read)(void *buff, uint32_t pos, size_t size, void *data);
+    void          *data;
 #endif
 } sgl_pixmap_t;
 
@@ -616,7 +618,7 @@ static inline void sgl_tick_inc(uint8_t ms)
 
 /**
  * @brief polling function to increase tick milliseconds
- * @param reg_addr register address of timer 
+ * @param reg_addr register address of timer
  * @param period  timer period that is counter increment interval of the timer
  * @return none
  * @note this function is used to loop, you should enable a timer for 1ms/period.
@@ -626,7 +628,7 @@ static inline void sgl_tick_inc(uint8_t ms)
  *                         sgl_tick_inc_polling(reg_us, 100);
  *                    - if you set the timer period to 100us, you should call this function:
  *                         sgl_tick_inc_polling(reg_us, 10);
- * 
+ *
  * @details: Of course, you can increase 2,3,4,5 ... tick milliseconds, such as:
  *                    The period of the timer is 1us, you can call this function:
  *                    sgl_tick_inc_polling(reg_us, 2000);
@@ -1538,7 +1540,7 @@ static inline sgl_color_t sgl_pixmap_get_pixel(const sgl_pixmap_t *pixmap, int16
 
 #if (CONFIG_SGL_EXTERNAL_PIXMAP)
     if (pixmap->read) {
-        pixmap->read(sgl_ctx.pixmap_buff, pos, 1);
+        pixmap->read(sgl_ctx.pixmap_buff, pos * sizeof(sgl_color_t), sizeof(sgl_color_t), pixmap->data);
         return *sgl_ctx.pixmap_buff;
     }
 #endif
@@ -1565,7 +1567,7 @@ static inline sgl_color_t* sgl_pixmap_get_buf(const sgl_pixmap_t *pixmap, int16_
 #if (CONFIG_SGL_EXTERNAL_PIXMAP)
     SGL_ASSERT(size <= sgl_panel_resolution_width());
     if (pixmap->read) {
-        pixmap->read(sgl_ctx.pixmap_buff, pos * sizeof(sgl_color_t), size * sizeof(sgl_color_t));
+        pixmap->read(sgl_ctx.pixmap_buff, pos * sizeof(sgl_color_t), size * sizeof(sgl_color_t), pixmap->data);
         return sgl_ctx.pixmap_buff;
     }
 #else
