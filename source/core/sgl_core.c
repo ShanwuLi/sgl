@@ -217,6 +217,46 @@ void sgl_obj_set_pos(sgl_obj_t *obj, int16_t x, int16_t y)
 
 
 /**
+ * @brief move object child position
+ * @param obj point to object
+ * @param ofs_x: x offset position
+ * @param ofs_y: y offset position
+ * @return none
+ */
+void sgl_obj_move_child_pos(sgl_obj_t *obj, int16_t ofs_x, int16_t ofs_y)
+{
+    SGL_ASSERT(obj != NULL);
+	sgl_obj_t *stack[SGL_OBJ_DEPTH_MAX];
+    int top = 0;
+
+    if (obj->child == NULL) {
+        return;
+    }
+    obj->dirty = 1;
+    stack[top++] = obj->child;
+
+    while (top > 0) {
+		SGL_ASSERT(top < SGL_OBJ_DEPTH_MAX);
+		obj = stack[--top];
+
+        obj->dirty = 1;
+        obj->coords.x1 += ofs_x;
+        obj->coords.x2 += ofs_x;
+        obj->coords.y1 += ofs_y;
+        obj->coords.y2 += ofs_y;
+
+		if (obj->sibling != NULL) {
+			stack[top++] = obj->sibling;
+		}
+
+		if (obj->child != NULL) {
+			stack[top++] = obj->child;
+		}
+    }
+}
+
+
+/**
  * @brief zoom object size
  * @param obj point to object
  * @param zoom zoom size

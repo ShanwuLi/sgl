@@ -337,7 +337,6 @@ void sgl_dropdown_delete_option_by_index(sgl_obj_t *obj, int index)
         curr = curr->next;
     }
 
-    // 删除节点
     if (prev == NULL) {
         dropdown->head = curr->next;
     } else {

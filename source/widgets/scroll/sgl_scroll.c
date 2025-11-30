@@ -86,6 +86,30 @@ static void sgl_scroll_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_
             sgl_draw_fill_round_rect(surf, &fill, &fill, scroll->desc.radius - scroll->desc.border, tmp, scroll->desc.alpha);
         }
     }
+    else if (evt->type == SGL_EVENT_MOVE_DOWN) {
+        if (scroll->direct == SGL_DIRECT_VERTICAL && scroll->value < 100) {
+            scroll->value ++;
+            sgl_obj_move_child_pos_y(scroll->bind, evt->distance);
+        }
+    }
+    else if(evt->type == SGL_EVENT_MOVE_UP) {
+        if (scroll->direct == SGL_DIRECT_VERTICAL && scroll->value > 0) {
+            scroll->value --;
+            sgl_obj_move_child_pos_y(scroll->bind, -evt->distance);
+        }
+    }
+    else if(evt->type == SGL_EVENT_MOVE_LEFT) {
+        if (scroll->direct == SGL_DIRECT_HORIZONTAL && scroll->value > 0) {
+            scroll->value --;
+            sgl_obj_move_child_pos_x(scroll->bind, -evt->distance);
+        }
+    }
+    else if(evt->type == SGL_EVENT_MOVE_RIGHT) {
+        if (scroll->direct == SGL_DIRECT_HORIZONTAL && scroll->value < 100) {
+            scroll->value ++;
+            sgl_obj_move_child_pos_x(scroll->bind, evt->distance);
+        }
+    }
     else if(evt->type == SGL_EVENT_PRESSED) {
         if(obj->event_fn) {
             obj->event_fn(evt);
@@ -118,6 +142,8 @@ sgl_obj_t* sgl_scroll_create(sgl_obj_t* parent)
     sgl_obj_t *obj = &scroll->obj;
     sgl_obj_init(&scroll->obj, parent);
     obj->construct_fn = sgl_scroll_construct_cb;
+    obj->movable = 1;
+    obj->clickable = 1;
 
     scroll->bind = NULL;
     scroll->direct = SGL_DIRECT_VERTICAL;

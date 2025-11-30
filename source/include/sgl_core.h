@@ -1125,6 +1125,40 @@ void sgl_obj_set_pos(sgl_obj_t *obj, int16_t x, int16_t y);
 
 
 /**
+ * @brief move object child position
+ * @param obj point to object
+ * @param ofs_x: x offset position
+ * @param ofs_y: y offset position
+ * @return none
+ */
+void sgl_obj_move_child_pos(sgl_obj_t *obj, int16_t ofs_x, int16_t ofs_y);
+
+
+/**
+ * @brief move object child x position
+ * @param obj point to object
+ * @param ofs_x: x offset position
+ * @return none
+ */
+static inline void sgl_obj_move_child_pos_x(sgl_obj_t *obj, int16_t ofs_x)
+{
+    sgl_obj_move_child_pos(obj, ofs_x, 0);
+}
+
+
+/**
+ * @brief move object child y position
+ * @param obj point to object
+ * @param ofs_y: y offset position
+ * @return none
+ */
+static inline void sgl_obj_move_child_pos_y(sgl_obj_t *obj, int16_t ofs_y)
+{
+    sgl_obj_move_child_pos(obj, 0, ofs_y);
+}
+
+
+/**
  * @brief zoom object size
  * @param obj point to object
  * @param zoom zoom size
