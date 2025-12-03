@@ -405,7 +405,7 @@ typedef struct sgl_obj {
     uint8_t            movable : 1;
     uint8_t            margin;
     uint16_t           flexible : 1;
-    uint16_t           evt_leave : 1;
+    uint16_t           focus : 1;
     uint16_t           pressed : 1;
     uint16_t           page : 1;
     uint16_t           radius : 12;

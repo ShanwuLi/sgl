@@ -51,13 +51,12 @@ typedef struct event_queue {
 /**
  * @brief event context struct
  * @last_click: last click object which may be lost event
- * @last_obj:   last object which is clicked
  * @last_touch: last touch position
  * @evtq: event queue
  */
 static struct event_context {
     struct sgl_obj *last_click;
-    struct sgl_obj *last_obj;
+    struct sgl_obj *last_focus;
     sgl_event_pos_t last_touch;
     event_queue_t   evtq;
 } evt_ctx;
@@ -77,7 +76,7 @@ int sgl_event_queue_init(void)
     }
 
     evt_ctx.evtq.head = evt_ctx.evtq.tail = 0;
-    evt_ctx.last_obj = sgl_screen_act();
+    evt_ctx.last_focus = NULL;
     return 0;
 }
 
@@ -299,7 +298,7 @@ static void sgl_get_move_info(sgl_event_t *evt)
 */
 void sgl_event_task(void)
 {
-    sgl_event_t evt, evt_leave;
+    sgl_event_t evt;
     struct sgl_obj *obj = NULL;
 
     /* Get event from event queue */
@@ -310,18 +309,6 @@ void sgl_event_task(void)
         if (obj == NULL) {
             if (evt.type != SGL_EVENT_MOTION) {
                 obj = click_detect_object(&evt.pos);
-
-                if (evt_ctx.last_obj->evt_leave && obj != evt_ctx.last_obj) {
-                    /* if the last object is not NULL, and current object is not last object, should send leave event to the last object */
-                    evt_leave.obj = evt_ctx.last_obj;
-                    evt_leave.type = SGL_EVENT_LEAVE;
-                    evt_leave.param = evt_ctx.last_obj->event_data;
-
-                    if (evt_leave.obj->construct_fn) {
-                        sgl_obj_set_dirty(evt_leave.obj);
-                        evt_leave.obj->construct_fn(NULL, evt_leave.obj, &evt_leave);
-                    }
-                }
             } else {
                 obj = evt_ctx.last_click;
                 sgl_get_move_info(&evt);
@@ -332,17 +319,37 @@ void sgl_event_task(void)
             evt.pos.x = sgl_clamp(obj->coords.x1, evt.pos.x, obj->coords.x2);
             evt.pos.y = sgl_clamp(obj->coords.y1, evt.pos.y, obj->coords.y2);
 
-            if (evt.type == SGL_EVENT_MOTION && (!sgl_obj_is_movable(obj))) {
-                continue;
-            }
-
             if (evt.type == SGL_EVENT_PRESSED) {
                 if (obj->pressed) {
                     continue;
                 }
                 obj->pressed = true;
                 evt_ctx.last_click = obj;
-                evt_ctx.last_obj = obj;
+
+                if (evt_ctx.last_focus != obj) {
+                    if (evt_ctx.last_focus && evt_ctx.last_focus != obj) {
+                        sgl_event_t unfocus_evt = {
+                            .type = SGL_EVENT_UNFOCUSED,
+                            .obj = evt_ctx.last_focus,
+                            .param = evt_ctx.last_focus->event_data
+                        };
+                        SGL_ASSERT(obj->construct_fn);
+                        sgl_obj_set_dirty(evt_ctx.last_focus);
+                        evt_ctx.last_focus->construct_fn(NULL, evt_ctx.last_focus, &unfocus_evt);
+                    }
+
+                    evt_ctx.last_focus = obj;
+
+                    if (obj->focus) {
+                        sgl_event_t focus_evt = {
+                            .type = SGL_EVENT_FOCUSED,
+                            .obj = obj,
+                            .param = obj->event_data
+                        };
+                        SGL_ASSERT(obj->construct_fn);
+                        obj->construct_fn(NULL, obj, &focus_evt);
+                    }
+                }
             }
             else if (evt.type == SGL_EVENT_RELEASED) {
                 if (!obj->pressed) {
@@ -356,11 +363,10 @@ void sgl_event_task(void)
                 evt_ctx.last_click = NULL;
             }
 
-            if (obj->construct_fn) {
-                sgl_obj_set_dirty(obj);
-                evt.param = obj->event_data;
-                obj->construct_fn(NULL, obj, &evt);
-            }
+            SGL_ASSERT(obj->construct_fn);
+            sgl_obj_set_dirty(obj);
+            evt.param = obj->event_data;
+            obj->construct_fn(NULL, obj, &evt);
         }
         else {
             SGL_LOG_TRACE("pos is out of object or no event_lost, skip event");
@@ -377,8 +383,8 @@ void sgl_event_task(void)
  * @brief Touch event read, this function will be called by user
  * @param x: touch x position
  * @param y: touch y position
- * @param flag: touch flag, it means touch event type:
- *              true: touch down
+ * @param flag: touch flag, it means touch event down or up:
+ *              true : touch down
  *              false: touch up
  * @return none
  * @note: for example, you can call it in 30ms tick handler function
@@ -393,7 +399,7 @@ void sgl_event_task(void)
  *            sgl_event_read_pos_polling(pos_x, pos_y, button_status);
  *        }
  */
-void sgl_event_read_pos_polling(int16_t x, int16_t y, bool flag)
+void sgl_event_pos_input(int16_t x, int16_t y, bool flag)
 {
     static sgl_event_pos_t last_pos;
     static bool pressed_flag = false;

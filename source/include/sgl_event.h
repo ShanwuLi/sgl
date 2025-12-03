@@ -42,27 +42,29 @@ struct sgl_page;
 
 
 /**
-* @brief This enumeration type lists all the event types of sgl
-*/
-typedef enum sgl_event_type {
-    SGL_EVENT_NULL = 0,
-    SGL_EVENT_NORMAL,
-    SGL_EVENT_PRESSED,
-    SGL_EVENT_RELEASED,
-    SGL_EVENT_CLICKED,
-    SGL_EVENT_MOTION,
-    SGL_EVENT_MOVE_UP,
-    SGL_EVENT_MOVE_DOWN,
-    SGL_EVENT_MOVE_LEFT,
-    SGL_EVENT_MOVE_RIGHT,
-    SGL_EVENT_LONG_PRESSED,
-    SGL_EVENT_OPTION_WALK,
-    SGL_EVENT_OPTION_TAP,
-    SGL_EVENT_DRAW_INIT,
-    SGL_EVENT_DRAW_MAIN,
-    SGL_EVENT_ALL = 255,
-
-} sgl_event_type_t;
+ * @brief Event type enumeration
+ * @note  The event type is used to describe the type of event, such as click, 
+ *        long press, etc. The event type is used to distinguish different events, 
+ *        and the event type is used to trigger different callbacks
+ */
+#define  SGL_EVENT_NULL                 (0)
+#define  SGL_EVENT_NORMAL               (1)    
+#define  SGL_EVENT_PRESSED              (2)
+#define  SGL_EVENT_RELEASED             (3)
+#define  SGL_EVENT_CLICKED              (4)
+#define  SGL_EVENT_MOTION               (5)
+#define  SGL_EVENT_MOVE_UP              (6)
+#define  SGL_EVENT_MOVE_DOWN            (7)
+#define  SGL_EVENT_MOVE_LEFT            (8)
+#define  SGL_EVENT_MOVE_RIGHT           (9)
+#define  SGL_EVENT_LONG_PRESSED         (10)
+#define  SGL_EVENT_OPTION_WALK          (11)
+#define  SGL_EVENT_OPTION_TAP           (12)
+#define  SGL_EVENT_DRAW_INIT            (13)
+#define  SGL_EVENT_DRAW_MAIN            (14)
+#define  SGL_EVENT_FOCUSED              (15)
+#define  SGL_EVENT_UNFOCUSED            (16)
+#define  sgl_event_type_t               uint8_t
 
 
 /**
@@ -159,8 +161,8 @@ void sgl_event_task(void);
  * @brief Touch event read, this function will be called by user
  * @param x: touch x position
  * @param y: touch y position
- * @param flag: touch flag, it means touch event type:
- *              true: touch down
+ * @param flag: touch flag, it means touch event down or up:
+ *              true : touch down
  *              false: touch up
  * @return none
  * @note: for example, you can call it in 30ms tick handler function
@@ -175,7 +177,7 @@ void sgl_event_task(void);
  *            sgl_event_read_pos_polling(pos_x, pos_y, button_status);
  *        }
  */
-void sgl_event_read_pos_polling(int16_t x, int16_t y, bool flag);
+void sgl_event_pos_input(int16_t x, int16_t y, bool flag);
 
 
 #ifdef __cplusplus
