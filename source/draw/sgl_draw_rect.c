@@ -133,7 +133,7 @@ void sgl_draw_fill_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_rect_t *r
 
     for (int y = clip.y1; y <= clip.y2; y++) {
         buf = sgl_surf_get_buf(surf, clip.x1 - surf->x, y - surf->y);
-        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1), pick_cy - (cy - y), clip.x2 - clip.x1 + 1);
+        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1 + 1), pick_cy - (cy - y + 1), clip.x2 - clip.x1 + 1);
 
         for (int x = clip.x1; x <= clip.x2; x++, buf++) {
             *buf = (alpha == SGL_ALPHA_MAX ? *pbuf : sgl_color_mixer(*pbuf, *buf, alpha));
@@ -354,7 +354,7 @@ void sgl_draw_fill_round_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_are
 
     for (int y = clip.y1; y <= clip.y2; y++) {
         buf = sgl_surf_get_buf(surf, clip.x1 - surf->x, y - surf->y);
-        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1), pick_cy - (cy - y), clip.x2 - clip.x1 + 1);
+        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1 + 1), pick_cy - (cy - y + 1), clip.x2 - clip.x1 + 1);
 
         if (y > cy1 && y < cy2) {
             for (int x = clip.x1; x <= clip.x2; x++, buf++, pbuf++) {
