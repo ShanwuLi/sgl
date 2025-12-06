@@ -704,11 +704,15 @@ sgl_color_t sgl_color_mixer(sgl_color_t fg_color, sgl_color_t bg_color, uint8_t 
 
 #elif (CONFIG_SGL_PANEL_PIXEL_DEPTH == SGL_COLOR_RGB565)
 
-    uint32_t rxb = bg_color.full & 0xF81F;
-    rxb += ((fg_color.full & 0xF81F) - rxb) * (factor >> 2) >> 6;
-    uint32_t xgx = bg_color.full & 0x07E0;
-    xgx += ((fg_color.full & 0x07E0) - xgx) * factor >> 8;
-    ret.full = (rxb & 0xF81F) | (xgx & 0x07E0);
+    uint32_t _alpha = factor >> 3;     
+    uint32_t fg = fg_color.full;
+    uint32_t bg = bg_color.full;
+
+    fg = (fg | fg << 16) & 0x07e0f81f;
+    bg = (bg | bg << 16) & 0x07e0f81f;
+    bg += (fg - bg) * _alpha >> 5;
+    bg &= 0x07e0f81f;
+    ret.full = (bg | bg >> 16);
 
 #elif (CONFIG_SGL_PANEL_PIXEL_DEPTH == SGL_COLOR_RGB888)
 
