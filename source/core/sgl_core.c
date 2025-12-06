@@ -226,7 +226,6 @@ void sgl_obj_set_pos(sgl_obj_t *obj, int16_t x, int16_t y)
     obj->coords.y1 = y + obj->parent->coords.y1;
     obj->coords.y2 += y_inc;
 
-    sgl_obj_dirty_merge(obj);
     sgl_obj_move_child_pos(obj, x_inc, y_inc);
 }
 
@@ -850,7 +849,7 @@ void sgl_obj_dirty_merge(sgl_obj_t *obj)
     int interval_x, interval_y;
 
     /* skip invalid area */
-    if (obj->area.x1 >= obj->area.x2 || obj->area.y1 >= obj->area.y2) {
+    if (obj->area.x1 > obj->area.x2 || obj->area.y1 > obj->area.y2) {
         return;
     }
 
@@ -1538,6 +1537,9 @@ static inline void sgl_dirty_area_calculate(sgl_obj_t *obj)
 
         /* check child dirty and merge all dirty area */
         if (sgl_obj_is_dirty(obj)) {
+            /* merge dirty area */
+            sgl_obj_dirty_merge(obj);
+
             /* update obj area */
             if (unlikely(!sgl_area_clip(&obj->parent->area, &obj->coords, &obj->area))) {
                 sgl_area_init(&obj->area);
@@ -1568,6 +1570,7 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
 {
     sgl_surf_t *surf = &sgl_ctx.page->surf;
     sgl_obj_t *head = &sgl_ctx.page->obj;
+    uint16_t max_h = 0, draw_h = 0, remaining = 0, dirty_w = 0, dirty_h = 0;
 
     /* fix dirty area if it is out of screen */
     dirty->x1 = sgl_max(dirty->x1, 0);
@@ -1577,17 +1580,26 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
 
 #if (!CONFIG_SGL_USE_FULL_FB)
     /* to set start x and y position for dirty area */
-    surf->y = dirty->y1;
+    dirty_w = dirty->x2 - dirty->x1 + 1;
+    dirty_h = dirty->y2 - dirty->y1 + 1;
+
+    SGL_ASSERT(dirty_w > 0);
+
     surf->x = dirty->x1;
-    surf->w = dirty->x2 - dirty->x1 + 1;
-    surf->h = surf->size / surf->w;
-    SGL_LOG_TRACE("sgl_draw_task: dirty area: x: %d, y: %d, w: %d, h: %d", dirty->x1, dirty->y1, surf->w, dirty->y2 - dirty->y1 + 1);
+    surf->y = dirty->y1;
+    surf->w = dirty_w;
 
-    while (surf->y < dirty->y2) {
-        /* cycle draw widget slice until the end of dirty area */
-        draw_obj_slice(head, surf, sgl_min(dirty->y2 - surf->y + 1, surf->h));
-        surf->y += surf->h;
+    max_h = surf->size / dirty_w;
+    surf->h = (uint16_t)sgl_min(max_h, (uint16_t)dirty_h);
 
+    SGL_LOG_TRACE("sgl_draw_task: dirty area: x: %d, y: %d, w: %d, h: %d", dirty->x1, dirty->y1, dirty_w, dirty_h);
+
+    while (surf->y <= dirty->y2) {
+        remaining = dirty->y2 - surf->y + 1;
+        draw_h = (remaining < surf->h) ? remaining : surf->h;
+
+        draw_obj_slice(head, surf, draw_h);
+        surf->y += draw_h;
         /* swap buffer for dma operation, but it depends on double buffer */
         sgl_surf_buffer_swap(surf);
     }
