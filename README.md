@@ -55,7 +55,7 @@ Steps are as follows:
 2. git clone https://github.com/sgl-org/sgl-port-windows.git
 3. cd sgl-port-windows && git submodule init
 4. git submodule update --remote
-3. cd demo && make config
+3. cd demo && make -j8
 4. make run
 
 Note: Please use git terminal or VSCode's git bash terminal to enter the above commands
