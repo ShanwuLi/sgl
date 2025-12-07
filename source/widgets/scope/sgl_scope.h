@@ -53,7 +53,7 @@ typedef struct {
     uint16_t running_max;              // max value of runtime
     uint8_t auto_scale : 1;            // whether to automatically scale
     uint8_t show_y_labels : 1;         // whether to show Y axis labels
-    uint8_t show_outer_border : 1;     // whether to show outer border
+    uint8_t outer_border;              // outer border width
     uint8_t line_width;                // width of waveform line
     uint8_t display_count;             // data count that has been displayed
     uint32_t max_display_points;       // max display points
@@ -279,13 +279,13 @@ static inline void sgl_scope_set_outer_border_color(sgl_obj_t* obj, sgl_color_t 
 /**
  * @brief show/hide outer border
  * @param obj scope object
- * @param show show/hide
+ * @param width border width
  * @return none
  */
-static inline void sgl_scope_show_outer_border(sgl_obj_t* obj, uint8_t show)
+static inline void sgl_scope_set_outer_border_width(sgl_obj_t* obj, uint8_t width)
 {
     sgl_scope_t *scope = (sgl_scope_t*)obj;
-    scope->show_outer_border = show;
+    scope->outer_border = width;
     sgl_obj_set_dirty(obj);
 }
 

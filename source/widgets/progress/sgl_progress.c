@@ -50,7 +50,7 @@ static void sgl_progress_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_even
     }
 
     if(evt->type == SGL_EVENT_DRAW_MAIN) {
-        knob.x2 = obj->coords.x1 + (obj->coords.x2 - obj->coords.x1) * progress->value / 100;
+        knob.x2 = obj->coords.x1 - obj->radius / 2 - 2 + (obj->coords.x2 - obj->coords.x1) * progress->value / 100;
 
         sgl_draw_rect(surf, &obj->area, &obj->coords, &progress->body);
 

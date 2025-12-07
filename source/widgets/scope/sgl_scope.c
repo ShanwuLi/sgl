@@ -193,88 +193,16 @@ static void scope_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_t *ev
             obj->area.y2 < surf->y || obj->area.y1 >= surf->y + surf->h) {
             return; // Object is fully off-screen; no need to draw
         }
-        
+
         // Draw background
         sgl_draw_rect_t bg_rect = {
             .color = scope->bg_color,
             .alpha = scope->alpha,
             .radius = 0,
-            .border = 0,
+            .border = scope->outer_border,
         };
         sgl_draw_rect(surf, &obj->area, &obj->coords, &bg_rect);
-        
-        // Draw outer border if enabled
-        if (scope->show_outer_border) {
-            sgl_draw_line_t outer_border_line = {
-                .color = scope->outer_border_color,
-                .width = 1,
-                .alpha = scope->alpha,
-            };
-            
-            // Left border
-            outer_border_line.start.x = obj->coords.x1 - 1;
-            outer_border_line.start.y = obj->coords.y1 - 1;
-            outer_border_line.end.x = obj->coords.x1 - 1;
-            outer_border_line.end.y = obj->coords.y2 + 1;
-            sgl_draw_line(surf, &outer_border_line);
-            
-            // Right border
-            outer_border_line.start.x = obj->coords.x2 + 1;
-            outer_border_line.start.y = obj->coords.y1 - 1;
-            outer_border_line.end.x = obj->coords.x2 + 1;
-            outer_border_line.end.y = obj->coords.y2 + 1;
-            sgl_draw_line(surf, &outer_border_line);
-            
-            // Top border
-            outer_border_line.start.x = obj->coords.x1 - 1;
-            outer_border_line.start.y = obj->coords.y1 - 1;
-            outer_border_line.end.x = obj->coords.x2 + 1;
-            outer_border_line.end.y = obj->coords.y1 - 1;
-            sgl_draw_line(surf, &outer_border_line);
-            
-            // Bottom border
-            outer_border_line.start.x = obj->coords.x1 - 1;
-            outer_border_line.start.y = obj->coords.y2 + 1;
-            outer_border_line.end.x = obj->coords.x2 + 1;
-            outer_border_line.end.y = obj->coords.y2 + 1;
-            sgl_draw_line(surf, &outer_border_line);
-        }
-        
-        // Draw inner border
-        sgl_draw_line_t border_line = {
-            .color = scope->border_color,
-            .width = 1,
-            .alpha = scope->alpha,
-        };
-        
-        // Left border
-        border_line.start.x = obj->coords.x1;
-        border_line.start.y = obj->coords.y1;
-        border_line.end.x = obj->coords.x1;
-        border_line.end.y = obj->coords.y2;
-        sgl_draw_line(surf, &border_line);
-        
-        // Right border
-        border_line.start.x = obj->coords.x2;
-        border_line.start.y = obj->coords.y1;
-        border_line.end.x = obj->coords.x2;
-        border_line.end.y = obj->coords.y2;
-        sgl_draw_line(surf, &border_line);
-        
-        // Top border
-        border_line.start.x = obj->coords.x1;
-        border_line.start.y = obj->coords.y1;
-        border_line.end.x = obj->coords.x2;
-        border_line.end.y = obj->coords.y1;
-        sgl_draw_line(surf, &border_line);
-        
-        // Bottom border
-        border_line.start.x = obj->coords.x1;
-        border_line.start.y = obj->coords.y2;
-        border_line.end.x = obj->coords.x2;
-        border_line.end.y = obj->coords.y2;
-        sgl_draw_line(surf, &border_line);
-        
+
         // Compute waveform display parameters
         uint16_t display_min = scope->min_value;
         uint16_t display_max = scope->max_value;
@@ -477,7 +405,7 @@ sgl_obj_t* sgl_scope_create(sgl_obj_t* parent)
     scope->max_display_points = 0; // Display all points by default
     scope->show_y_labels = 0;      // Hide Y-axis labels by default
     scope->alpha = SGL_ALPHA_MAX;  // Fully opaque by default
-    scope->show_outer_border = 0;  // Hide outer border by default
+    scope->outer_border = 0;       // Hide outer border by default
     scope->grid_style = 0;         // Solid grid lines by default
     scope->y_label_font = NULL;    // No font by default
     scope->y_label_color = sgl_rgb(255, 255, 255); // White label color
