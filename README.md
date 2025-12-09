@@ -68,12 +68,12 @@ Then extract to any directory and add to environment variables
 git clone https://github.com/sgl-org/sgl-port-windows.git
 
 ## 3. Configure Project
-cd sgl-port-windows && git submodule init
-git submodule update --remote
-cd demo && make -j8
+cd sgl-port-windows && git submodule init   
+git submodule update --remote    
+cd demo && make -j8  
 
 ## 4. Run
-Execute `make run` command to run
-
+Execute `make run` command to run     
+      
 QQ Group: 544602724
 or if you have any questions, please contact me: 1477153217@qq.com

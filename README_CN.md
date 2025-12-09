@@ -44,7 +44,7 @@ SGL (Small Graphics Library) 是一个轻量级且快速的图形库，专为MCU
 2. git clone https://github.com/sgl-org/sgl-port-windows.git    
 3. cd sgl-port-windows && git submodule init    
 4. git submodule update --remote    
-3. cd demo && make config    
+3. cd demo && make -j8    
 4. make run    
 
 注意：请使用git终端或VSCode的git bash终端输入上述命令
@@ -58,11 +58,11 @@ git clone https://github.com/sgl-org/sgl-port-windows.git
 
 ## 3. 配置项目
 cd sgl-port-windows && git submodule init    
-git submodule update --remote    
-cd demo && make config   
+git submodule update --remote      
+cd demo && make -j8   
 
 ## 4. 运行
-执行 `make run` 命令运行
-
+执行 `make run` 命令运行    
+         
 QQ群: 544602724
 如有任何问题，请联系我: 1477153217@qq.com
