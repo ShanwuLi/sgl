@@ -220,7 +220,7 @@ void sgl_anim_task(void)
  *                  Uses 32-bit integer arithmetic to avoid floating-point operations
  *                  for better performance on embedded systems
  */
-int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int16_t start, int16_t end)
+int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int32_t start, int32_t end)
 {
     uint64_t progress_fixed, delta, result;
 
@@ -261,7 +261,7 @@ int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int16_t start, i
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int16_t start, int16_t end)
+int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int32_t start, int32_t end)
 {
     uint32_t t_180, cos_val, delta;
     if (elaps >= duration)
@@ -296,7 +296,7 @@ int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int16_t sta
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int16_t start, int16_t end)
+int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int32_t start, int32_t end)
 {
     uint32_t angle, sin_val, delta;
     if (elaps >= duration)
@@ -326,7 +326,7 @@ int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int16_t start,
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_in(uint32_t elaps, uint32_t duration, int16_t start, int16_t end)
+int32_t sgl_anim_path_ease_in(uint32_t elaps, uint32_t duration, int32_t start, int32_t end)
 {
     uint32_t angle, cos_val, delta;
     if (elaps >= duration)

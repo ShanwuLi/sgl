@@ -45,7 +45,7 @@ struct sgl_anim;
 
 /* Anim path callback */
 typedef void (*sgl_anim_path_cb_t)(struct sgl_anim *anim, int32_t value);
-typedef int32_t (*sgl_anim_path_algo_t)(uint32_t elaps, uint32_t duration, int16_t start, int16_t end);
+typedef int32_t (*sgl_anim_path_algo_t)(uint32_t elaps, uint32_t duration, int32_t start, int32_t end);
 
 
 typedef struct sgl_anim {
@@ -54,8 +54,8 @@ typedef struct sgl_anim {
     uint32_t              act_time;
     uint32_t              act_delay;
     uint32_t              act_duration;
-    uint16_t              start_value;
-    uint16_t              end_value;
+    int32_t               start_value;
+    int32_t               end_value;
     sgl_anim_path_cb_t    path_cb;
     sgl_anim_path_algo_t  path_algo;
     void                  (*finish_cb)(struct sgl_anim *anim);
@@ -313,7 +313,7 @@ void sgl_anim_task(void);
  *                  Uses 32-bit integer arithmetic to avoid floating-point operations
  *                  for better performance on embedded systems
  */
-int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int16_t start, int16_t end);
+int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int32_t start, int32_t end);
 #define SGL_ANIM_PATH_LINEAR  sgl_anim_path_linear
 
 
@@ -329,7 +329,7 @@ int32_t sgl_anim_path_linear(uint32_t elaps, uint32_t duration, int16_t start, i
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int16_t start, int16_t end);
+int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int32_t start, int32_t end);
 #define SGL_ANIM_PATH_EASE_IN_OUT  sgl_anim_path_ease_in_out
 
 
@@ -345,7 +345,7 @@ int32_t sgl_anim_path_ease_in_out(uint32_t elaps, uint32_t duration, int16_t sta
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int16_t start, int16_t end);
+int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int32_t start, int32_t end);
 #define SGL_ANIM_PATH_EASE_OUT  sgl_anim_path_ease_out
 
 
@@ -361,7 +361,7 @@ int32_t sgl_anim_path_ease_out(uint32_t elaps, uint32_t duration, int16_t start,
  * @param end       End value
  * @return          Interpolated value at current time
  */
-int32_t sgl_anim_path_ease_in(uint32_t elaps, uint32_t duration, int16_t start, int16_t end);
+int32_t sgl_anim_path_ease_in(uint32_t elaps, uint32_t duration, int32_t start, int32_t end);
 #define SGL_ANIM_PATH_EASE_IN  sgl_anim_path_ease_in
 
 #endif // ! CONFIG_SGL_ANIMATION
