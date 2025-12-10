@@ -40,16 +40,16 @@ extern "C" {
 
 typedef struct {
     sgl_obj_t obj;
-    uint16_t *data_buffer;             // channel data buffer
+    int16_t  *data_buffer;             // channel data buffer
     uint32_t  data_len;                // data length
     sgl_color_t waveform_color;        // waveform color
     sgl_color_t bg_color;              // background color
     sgl_color_t grid_color;            // grid line color
     sgl_color_t border_color;          // border color
-    uint16_t min_value;                // min value of data
-    uint16_t max_value;                // max value of data
-    uint16_t running_min;              // min value of runtime
-    uint16_t running_max;              // max value of runtime
+    int16_t min_value;                 // min value of data
+    int16_t max_value;                 // max value of data
+    int16_t running_min;               // min value of runtime
+    int16_t running_max;               // max value of runtime
     uint8_t auto_scale : 1;            // whether to automatically scale
     uint8_t show_y_labels : 1;         // whether to show Y axis labels
     uint8_t border_width;              // outer border width
@@ -78,7 +78,7 @@ sgl_obj_t* sgl_scope_create(sgl_obj_t* parent);
  * @param data_len data length
  * @return none
  */
-static inline void sgl_scope_set_data_buffer(sgl_obj_t* obj, uint16_t *data_buffer, uint32_t data_len)
+static inline void sgl_scope_set_data_buffer(sgl_obj_t* obj, int16_t *data_buffer, uint32_t data_len)
 {
     sgl_scope_t *scope = (sgl_scope_t*)obj;
     scope->data_buffer = data_buffer;
@@ -93,7 +93,7 @@ static inline void sgl_scope_set_data_buffer(sgl_obj_t* obj, uint16_t *data_buff
  *       If the oscilloscope is configured to auto-scale, the function updates the running minimum and maximum values. 
  *       The function also updates the display count and marks the oscilloscope object as dirty.
  */
-void sgl_scope_append_data(sgl_obj_t* obj, uint16_t value);
+void sgl_scope_append_data(sgl_obj_t* obj, int16_t value);
 
 /**
  * @brief get scope data
@@ -101,7 +101,7 @@ void sgl_scope_append_data(sgl_obj_t* obj, uint16_t value);
  * @param index data index
  * @return data value
  */
-static inline uint16_t sgl_scope_get_data(sgl_obj_t* obj, uint32_t index)
+static inline int16_t sgl_scope_get_data(sgl_obj_t* obj, uint32_t index)
 {
     sgl_scope_t *scope = (sgl_scope_t*)obj;
     if (index >= scope->data_len) 

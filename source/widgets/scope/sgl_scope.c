@@ -318,7 +318,7 @@ static void scope_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_t *ev
             
             // Compute index of the most recent data point (rightmost on screen)
             uint32_t last_index = (scope->current_index == 0) ? scope->data_len - 1 : scope->current_index - 1;
-            uint16_t last_value = scope->data_buffer[last_index];
+            int16_t last_value = scope->data_buffer[last_index];
             
             // Clamp value to display range
             if (last_value < display_min) last_value = display_min;
@@ -332,7 +332,7 @@ static void scope_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_t *ev
                 //int index = (scope->current_index >= i) ? scope->current_index - i : scope->data_len - (i - scope->current_index);
                 uint32_t prev_index = (scope->current_index >= i + 1) ? scope->current_index - (i + 1) : scope->data_len - (i + 1 - scope->current_index);
                 
-                uint16_t current_value = scope->data_buffer[prev_index];
+                int16_t current_value = scope->data_buffer[prev_index];
 
                 // Clamp value to display range
                 current_value = sgl_clamp(current_value, display_min, display_max);
@@ -421,7 +421,7 @@ sgl_obj_t* sgl_scope_create(sgl_obj_t* parent)
  *       If the oscilloscope is configured to auto-scale, the function updates the running minimum and maximum values. 
  *       The function also updates the display count and marks the oscilloscope object as dirty.
  */
-void sgl_scope_append_data(sgl_obj_t* obj, uint16_t value)
+void sgl_scope_append_data(sgl_obj_t* obj, int16_t value)
 {
     sgl_scope_t *scope = (sgl_scope_t*)obj;
     
