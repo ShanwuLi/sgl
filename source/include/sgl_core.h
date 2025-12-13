@@ -1280,11 +1280,9 @@ void sgl_obj_set_pos_align_ref(sgl_obj_t *ref, sgl_obj_t *obj, sgl_align_type_t 
 static inline void sgl_obj_set_size(sgl_obj_t *obj, int16_t width, int16_t height)
 {
     SGL_ASSERT(obj != NULL);
-
-    sgl_obj_dirty_merge(obj);
-
     obj->coords.x2 = obj->coords.x1 + width - 1;
     obj->coords.y2 = obj->coords.y1 + height - 1;
+    sgl_obj_set_dirty(obj);
 }
 
 
@@ -1296,7 +1294,6 @@ static inline void sgl_obj_set_size(sgl_obj_t *obj, int16_t width, int16_t heigh
 static inline sgl_size_t sgl_obj_get_size(sgl_obj_t *obj)
 {
     SGL_ASSERT(obj != NULL);
-
     sgl_size_t size;
     size.w = obj->coords.x2 - obj->coords.x1 + 1;
     size.h = obj->coords.y2 - obj->coords.y1 + 1;

@@ -131,14 +131,14 @@ void sgl_draw_fill_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_rect_t *r
         return;
     }
 
-    int cx = (rect->x1 + rect->x2) / 2;
-    int cy = (rect->y1 + rect->y2) / 2;
+    int cx = (rect->x1 + rect->x2 - 1) / 2;
+    int cy = (rect->y1 + rect->y2 - 1) / 2;
     int pick_cx = pixmap->width / 2;
     int pick_cy = pixmap->height / 2;
 
     for (int y = clip.y1; y <= clip.y2; y++) {
         buf = sgl_surf_get_buf(surf, clip.x1 - surf->x, y - surf->y);
-        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1 + 1), pick_cy - (cy - y + 1), clip.x2 - clip.x1 + 1);
+        pbuf = sgl_pixmap_get_buf(pixmap, pick_cx - (cx - clip.x1 + 1), pick_cy - (cy - y + 1), clip.x2 - clip.x1);
 
         for (int x = clip.x1; x <= clip.x2; x++, buf++) {
             *buf = (alpha == SGL_ALPHA_MAX ? *pbuf : sgl_color_mixer(*pbuf, *buf, alpha));
@@ -340,8 +340,8 @@ void sgl_draw_fill_round_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_are
     int cy2 = rect->y2 - radius;
     int cx_tmp = 0;
     int cy_tmp = 0;
-    int cx = (rect->x1 + rect->x2) / 2;
-    int cy = (rect->y1 + rect->y2) / 2;
+    int cx = (rect->x1 + rect->x2 - 1) / 2;
+    int cy = (rect->y1 + rect->y2 - 1) / 2;
     int pick_cx = pixmap->width / 2;
     int pick_cy = pixmap->height / 2;
 
