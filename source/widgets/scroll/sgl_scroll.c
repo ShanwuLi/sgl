@@ -63,8 +63,10 @@ static void sgl_scroll_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_
 
                 fill.x1 = obj->coords.x1 + scroll->desc.border;
                 fill.x2 = obj->coords.x2 - scroll->desc.border;
-                fill.y1 = pos + scroll->desc.border;
-                fill.y2 = pos + len - scroll->desc.border;
+                //fill.y1 = pos + scroll->desc.border;
+                //fill.y2 = pos + len - scroll->desc.border;
+                fill.y1 = obj->coords.y1+pos + scroll->desc.border;
+                fill.y2 = obj->coords.y1+pos + len - scroll->desc.border;
             }
             else if (scroll->direct == SGL_DIRECT_HORIZONTAL) {
                 obj->coords.x1 = scroll->bind->coords.x1;
@@ -77,8 +79,10 @@ static void sgl_scroll_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_
 
                 fill.y1 = obj->coords.y1 + scroll->desc.border;
                 fill.y2 = obj->coords.y2 - scroll->desc.border;
-                fill.x1 = pos + scroll->desc.border;
-                fill.x2 = pos + len - scroll->desc.border;
+                //fill.x1 = pos + scroll->desc.border;
+                //fill.x2 = pos + len - scroll->desc.border;
+                fill.x1 =obj->coords.x1+ pos + scroll->desc.border;
+                fill.x2 =obj->coords.x2+ pos + len - scroll->desc.border;
             }
 
             sgl_draw_rect(surf, &obj->coords, &obj->coords, &scroll->desc);
