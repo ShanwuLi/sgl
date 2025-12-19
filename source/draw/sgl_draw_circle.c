@@ -128,7 +128,7 @@ void sgl_draw_fill_circle_pixmap(sgl_surf_t *surf, sgl_area_t *area, int16_t cx,
             real_r2 = sgl_pow2(x - cx) + y2;
 
             step_x = (scale_x * (x - s_x)) >> 10;
-            pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y, 10);
+            pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y);
 
             if (real_r2 >= r2_max) {
                 if(x > cx)

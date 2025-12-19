@@ -268,7 +268,7 @@ void sgl_draw_fill_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_area_t *r
         if (radius == 0) {
             for (int x = clip.x1; x <= clip.x2; x++, buf++) {
                 step_x = (scale_x * (x - rect->x1)) >> 10;
-                pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y, 10);
+                pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y);
                 *buf = (alpha == SGL_ALPHA_MAX ? *pbuf : sgl_color_mixer(*pbuf, *buf, alpha));
             }
         }
@@ -276,7 +276,7 @@ void sgl_draw_fill_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_area_t *r
             if (y > cy1 && y < cy2) {
                 for (int x = clip.x1; x <= clip.x2; x++, buf++) {
                     step_x = (scale_x * (x - rect->x1)) >> 10;
-                    pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y, 10);
+                    pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y);
                     *buf = (alpha == SGL_ALPHA_MAX ? *pbuf : sgl_color_mixer(*pbuf, *buf, alpha));
                 }
             }
@@ -286,7 +286,7 @@ void sgl_draw_fill_rect_pixmap(sgl_surf_t *surf, sgl_area_t *area, sgl_area_t *r
 
                 for (int x = clip.x1; x <= clip.x2; x++, buf++) {
                     step_x = (scale_x * (x - rect->x1)) >> 10;
-                    pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y, 10);
+                    pbuf = sgl_pixmap_get_buf(pixmap, step_x, step_y);
 
                     if(x > cx1 && x < cx2) {
                         *buf = (alpha == SGL_ALPHA_MAX ? *pbuf : sgl_color_mixer(*pbuf, *buf, alpha));

@@ -1556,26 +1556,13 @@ static inline sgl_color_t sgl_pixmap_get_pixel(const sgl_pixmap_t *pixmap, int16
  * @pixmap: pointe to pixmap
  * @param x: x position
  * @param y: y position
- * @param size: pixel size
  * @return sgl_color_t: pixel color address
  */
-static inline sgl_color_t* sgl_pixmap_get_buf(const sgl_pixmap_t *pixmap, int16_t x, int16_t y, size_t size)
+static inline sgl_color_t* sgl_pixmap_get_buf(const sgl_pixmap_t *pixmap, int16_t x, int16_t y)
 {
     uint32_t pos;
-
     SGL_ASSERT(pixmap != NULL);
     pos = y * pixmap->width + x;
-
-#if (CONFIG_SGL_EXTERNAL_PIXMAP)
-    SGL_ASSERT(size <= sgl_panel_resolution_width());
-    if (pixmap->read) {
-        pixmap->read(sgl_ctx.pixmap_buff, pos * sizeof(sgl_color_t), size * sizeof(sgl_color_t), pixmap->data);
-        return sgl_ctx.pixmap_buff;
-    }
-#else
-    SGL_UNUSED(size);
-#endif
-
     return &((sgl_color_t*)pixmap->bitmap)[pos];
 }
 
