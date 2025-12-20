@@ -59,4 +59,8 @@ extern const sgl_font_t consolas32;
 extern const sgl_font_t kai33;
 #endif
 
+#if CONFIG_SGL_FONT_CONSOLAS24_COMPRESS
+const sgl_font_t consolas24_compress
+#endif
+
 #endif // !__SGL_FONT_H__
