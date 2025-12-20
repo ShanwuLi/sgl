@@ -121,6 +121,6 @@ void sgl_draw_line(sgl_surf_t *surf, sgl_draw_line_t *desc)
         sgl_draw_fill_vline(surf, x1, y1, y2, desc->width, desc->color, alpha);
     }
     else {
-        sgl_draw_slanting_line(surf, desc);
+        //sgl_draw_slanting_line(surf, desc);
     }
 }

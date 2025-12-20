@@ -1550,15 +1550,14 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
 {
     sgl_surf_t *surf = &sgl_ctx.page->surf;
     sgl_obj_t  *head = &sgl_ctx.page->obj;
-    uint16_t dirty_h = 0, draw_h = 0;
 
-    dirty->x1 = sgl_max(dirty->x1, 0);
-    dirty->y1 = sgl_max(dirty->y1, 0);
-    dirty->x2 = sgl_min(dirty->x2, SGL_SCREEN_WIDTH  - 1);
-    dirty->y2 = sgl_min(dirty->y2, SGL_SCREEN_HEIGHT - 1);
-    dirty_h = dirty->y2 - dirty->y1 + 1;
+    /* check dirty area, ensure it is valid */
+    SGL_ASSERT(dirty != NULL && dirty->x1 >= 0 && dirty->y1 >= 0 && dirty->x2 >= dirty->x1 && dirty->y2 >= dirty->y1);
 
 #if (!CONFIG_SGL_USE_FULL_FB)
+    uint16_t dirty_h = 0, draw_h = 0;
+    dirty_h = dirty->y2 - dirty->y1 + 1;
+
     surf->x1 = dirty->x1;
     surf->y1 = dirty->y1;
     surf->x2 = dirty->x2;
@@ -1583,7 +1582,7 @@ static inline void sgl_draw_task(sgl_area_t *dirty)
     surf->x2 = dirty->x2;
     surf->y2 = dirty->y2;
 
-    SGL_LOG_TRACE("sgl_draw_task: dirty area  x:%d y:%d w:%d h:%d", dirty->x1, dirty->y1, dirty_w, dirty_h);
+    SGL_LOG_TRACE("sgl_draw_task: dirty area  x1:%d y1:%d x2:%d y2:%d", dirty->x1, dirty->y1, dirty->x2, dirty->y2);
 
     draw_obj_slice(head, surf);
     sgl_surf_buffer_swap(surf);
