@@ -63,7 +63,7 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
 
         if (ext_img->read) {
             sgl_color_t *src = (sgl_color_t*)bitmap;
-            src += (clip.y1 - area.y1 + clip.x1 - area.x1);
+            src += (clip.y1 - area.y1) * ext_img->pixmap->width + clip.x1 - area.x1;
             for (int y = clip.y1; y <= clip.y2; y++) {
 
                 buf = sgl_surf_get_buf(surf, clip.x1 - surf->x1, y - surf->y1);
@@ -106,7 +106,7 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
 
 
 /**
- * @brief create a ext_img object
+ * @brief create an ext_img object
  * @param parent parent of the ext_img
  * @return ext_img object
  */

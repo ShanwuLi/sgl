@@ -83,7 +83,7 @@ typedef struct sgl_ext_img {
 
 
 /**
- * @brief create a ext_img object
+ * @brief create an ext_img object
  * @param parent parent of the ext_img
  * @return ext_img object
  */
