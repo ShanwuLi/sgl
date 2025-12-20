@@ -46,7 +46,8 @@
  *          sgl_pixmap_t test_pixmap = {
  *              .width = 142,
  *              .height = 69,
- *              .address = addr_of_extern_flash,
+ *              .bitmap = addr_of_extern_flash,
+ *              .format = SGL_PIXMAP_FMT_NONE,
  *          };
  *          sgl_obj_t *ext_img = sgl_ext_img_create(NULL);
  *          sgl_obj_set_pos(ext_img, 10, 10);

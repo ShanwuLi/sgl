@@ -259,16 +259,12 @@ typedef struct sgl_surf {
 * @height: pixmap height
 * @format: bitmap format 0: no compression, 1:
 * @bitmap: point to image bitmap
-* @address: address of bitmap
 */
 typedef struct sgl_pixmap {
     uint32_t width : 12;
     uint32_t height : 12;
     uint32_t format : 8;
-    union pixmap {
-        const uint8_t *bitmap;
-        const uint8_t *address;
-    };
+    const uint8_t *bitmap;
 } sgl_pixmap_t;
 
 
