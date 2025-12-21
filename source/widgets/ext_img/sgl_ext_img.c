@@ -32,6 +32,45 @@
 #include <string.h>
 #include "sgl_ext_img.h"
 
+typedef struct rlecontext {
+    const uint8_t *bitmap;
+    uint32_t index;
+    uint8_t remainder;
+    uint8_t bit_count;
+    sgl_color_t color;
+} rlecontext_t;
+
+rlecontext_t relctx = {
+    .bitmap = NULL,
+    .index = 0,
+    .remainder = 0,
+    .bit_count = 0
+};
+
+static inline void rel_init(const uint8_t *bitmap)
+{
+    if (relctx.bitmap == NULL) {
+        relctx.bitmap = bitmap;
+        relctx.index = 0;
+        relctx.bit_count = 0;
+    }
+}
+
+static void rel_rgb565_decompress_line(sgl_area_t *coords, sgl_area_t *area, sgl_color_t *out)
+{
+    for (int i = coords->x1; i <= coords->x2; i++) {
+        if (relctx.remainder == 0) {
+            relctx.remainder = relctx.bitmap[relctx.index++];
+            relctx.color = *(sgl_color_t*)&relctx.bitmap[relctx.index];
+            relctx.index += 2;
+        }
+
+        if (i >= area->x1 && i <= area->x2) {
+            *out++ = relctx.color;
+        }
+        relctx.remainder --;
+    };
+}
 
 static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event_t *evt)
 {
@@ -61,6 +100,7 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
             return;
         }
 
+        /* external pixmap support */
         if (ext_img->read) {
             sgl_color_t *src = (sgl_color_t*)bitmap;
             src += (clip.y1 - area.y1) * ext_img->pixmap->width + clip.x1 - area.x1;
@@ -79,21 +119,17 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
             return;
         }
 
+        /* RLE pixmap support */
         if (ext_img->pixmap->format == SGL_PIXMAP_FMT_RLE_RGB332) {
             for (int y = clip.y1; y <= clip.y2; y++) {
                 buf = sgl_surf_get_buf(surf, clip.x1 - surf->x1, y - surf->y1);
-                for (int x = clip.x1; x <= clip.x2; x++, buf++) {
-
-                }
             }
         }
         else if (ext_img->pixmap->format == SGL_PIXMAP_FMT_RLE_RGB565) {
-            for (int y = clip.y1; y < clip.y2; y++) {
+            rel_init(bitmap);
+            for (int y = clip.y1; y <= clip.y2; y++) {
                 buf = sgl_surf_get_buf(surf, clip.x1 - surf->x1, y - surf->y1);
-
-                for (int x = clip.x1; x < clip.x2; x++, buf++) {
-
-                }
+                rel_rgb565_decompress_line(&area, &clip, buf);
             }
         }
         else if (ext_img->pixmap->format == SGL_PIXMAP_FMT_RLE_RGB888) {
