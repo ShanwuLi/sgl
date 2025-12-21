@@ -129,7 +129,7 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
             rel_init(bitmap);
             for (int y = clip.y1; y <= clip.y2; y++) {
                 buf = sgl_surf_get_buf(surf, clip.x1 - surf->x1, y - surf->y1);
-                rle_rgb565_decompress_line(&area, &clip, buf);
+                rle_rgb565_decompress_line(&area, &obj->area, buf);
             }
         }
         else if (ext_img->pixmap->format == SGL_PIXMAP_FMT_RLE_RGB888) {
