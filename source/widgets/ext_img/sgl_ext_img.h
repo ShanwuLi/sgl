@@ -54,7 +54,7 @@
  *          sgl_obj_set_size(ext_img, 142, 69);
  *          sgl_ext_img_set_read_ops(ext_img, flash_port_read_data_from_flash);
  *  
- * 2. REL compress image object:
+ * 2. RLE compress image object:
  *      you can use this object to draw image from external flash memory
  *      for example:
             extern const uint8_t pixmap_data[19596];

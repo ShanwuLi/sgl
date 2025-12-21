@@ -40,7 +40,7 @@ typedef struct rlecontext {
     sgl_color_t color;
 } rlecontext_t;
 
-rlecontext_t relctx = {
+rlecontext_t rlectx = {
     .bitmap = NULL,
     .index = 0,
     .remainder = 0,
@@ -49,26 +49,26 @@ rlecontext_t relctx = {
 
 static inline void rel_init(const uint8_t *bitmap)
 {
-    if (relctx.bitmap == NULL) {
-        relctx.bitmap = bitmap;
-        relctx.index = 0;
-        relctx.bit_count = 0;
+    if (rlectx.bitmap == NULL) {
+        rlectx.bitmap = bitmap;
+        rlectx.index = 0;
+        rlectx.bit_count = 0;
     }
 }
 
-static void rel_rgb565_decompress_line(sgl_area_t *coords, sgl_area_t *area, sgl_color_t *out)
+static void rle_rgb565_decompress_line(sgl_area_t *coords, sgl_area_t *area, sgl_color_t *out)
 {
     for (int i = coords->x1; i <= coords->x2; i++) {
-        if (relctx.remainder == 0) {
-            relctx.remainder = relctx.bitmap[relctx.index++];
-            relctx.color = *(sgl_color_t*)&relctx.bitmap[relctx.index];
-            relctx.index += 2;
+        if (rlectx.remainder == 0) {
+            rlectx.remainder = rlectx.bitmap[rlectx.index++];
+            rlectx.color = *(sgl_color_t*)&rlectx.bitmap[rlectx.index];
+            rlectx.index += 2;
         }
 
         if (i >= area->x1 && i <= area->x2) {
-            *out++ = relctx.color;
+            *out++ = rlectx.color;
         }
-        relctx.remainder --;
+        rlectx.remainder --;
     };
 }
 
@@ -129,7 +129,7 @@ static void sgl_ext_img_construct_cb(sgl_surf_t *surf, sgl_obj_t* obj, sgl_event
             rel_init(bitmap);
             for (int y = clip.y1; y <= clip.y2; y++) {
                 buf = sgl_surf_get_buf(surf, clip.x1 - surf->x1, y - surf->y1);
-                rel_rgb565_decompress_line(&area, &clip, buf);
+                rle_rgb565_decompress_line(&area, &clip, buf);
             }
         }
         else if (ext_img->pixmap->format == SGL_PIXMAP_FMT_RLE_RGB888) {
